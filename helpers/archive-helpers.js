@@ -1,6 +1,7 @@
 var fs = require('fs');
 var path = require('path');
 var _ = require('underscore');
+var http = require('http');
 
 /*
  * You will need to reuse the same paths many times over in the course of this sprint.
@@ -61,9 +62,9 @@ exports.addUrlToList = function(url, callback) {
 
 exports.isUrlArchived = function(url, callback) {
   fs.readFile((exports.paths.archivedSites + '/' + url), 'utf8', function(err, data) {
-    console.log(exports.paths.archivedSites + '/' + url);
+    // console.log(exports.paths.archivedSites + '/' + url);
     if (err) {
-      console.log('File does not exist!');
+      //console.log('File does not exist!');
       callback(false);
     } else {
       callback(true);
@@ -72,4 +73,81 @@ exports.isUrlArchived = function(url, callback) {
 };
 
 exports.downloadUrls = function(urls) {
+  urls.forEach(function(url) {
+    // If URL is not archived
+    exports.isUrlArchived(url, function(exists) {
+      if (!exists) {
+
+        // do get
+        // This is all the shit will be right below - Craig
+        http.get('http://' + url + '/', function(res) {
+          var statusCode = res.statusCode;
+          var contentType = res.headers['content-type'];
+
+          var error;
+          if (statusCode !== 200) {
+            error = new Error(`Request Failed.\n` +
+                              `Status Code: ${statusCode}`);
+          }
+
+          if (error) {
+            console.log(error.message);
+            // consume response data to free up memory
+            res.resume();
+            return;
+          }
+
+          res.setEncoding('utf8');
+          var rawData = '';
+          res.on('data', function (chunk) {
+            rawData += chunk;
+          });
+          res.on('end', function() {
+            // Write to file
+            // Inside the callback, write it to archives/sites
+            fs.writeFile(exports.paths.archivedSites + '/' + url, rawData, function(err) {
+              if (err) {
+                console.log('File could not be written');
+              }
+            });
+            //console.log(rawData);
+          });
+        }).on('error', (e) => {
+          console.log(e);
+          console.log(url);
+          console.log(`Got error: ${e.message}`);
+        });
+      } else {
+        // error
+        console.log('Url exists. Did not try to download it.');
+      }
+    }); 
+  }); 
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
