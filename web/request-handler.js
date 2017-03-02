@@ -33,6 +33,7 @@ exports.handleRequest = function (req, res) {
         } else {
           res.writeHead(302);
         }
+        fs.writeFileSync(archive.paths.archivedSites + '/www.example.com', 'blah blah');
         res.end('Hello, Craig');
       });
     });

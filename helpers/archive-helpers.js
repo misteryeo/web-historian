@@ -32,7 +32,7 @@ exports.readListOfUrls = function(callback) {
       console.log('There\'s another error!');
     } else {
       urlArray = data.split('\n');
-      return callback(urlArray);
+      callback(urlArray);
     }
   });
 };
@@ -44,16 +44,31 @@ exports.isUrlInList = function(url, callback) {
       console.log('There\'s another error!');
     } else {
       urlArray = data.split('\n');
+      callback(urlArray.indexOf(url) > -1);
     }
   });
-
-  callback(urlArray.includes(url));
 };
 
 exports.addUrlToList = function(url, callback) {
+  fs.appendFile(exports.paths.list, url + '\n', 'utf8', function(err) {
+    if (err) {
+      console.log('Error!');
+    } else {
+      callback();
+    }
+  });
 };
 
 exports.isUrlArchived = function(url, callback) {
+  fs.readFile((exports.paths.archivedSites + '/' + url), 'utf8', function(err, data) {
+    console.log(exports.paths.archivedSites + '/' + url);
+    if (err) {
+      console.log('File does not exist!');
+      callback(false);
+    } else {
+      callback(true);
+    }
+  });
 };
 
 exports.downloadUrls = function(urls) {

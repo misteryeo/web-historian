@@ -100,8 +100,7 @@ describe('archive helpers', function() {
 
       archive.isUrlInList('example1.com', function (exists) {
         expect(exists).to.be.true;
-        done();
-        // if (++counter === total) { done(); }
+        if (++counter === total) { done(); }
       });
 
       archive.isUrlInList('gibberish', function (exists) {
@@ -133,6 +132,7 @@ describe('archive helpers', function() {
       var total = 2;
 
       archive.isUrlArchived('www.example.com', function (exists) {
+        console.log(exists);
         expect(exists).to.be.true;
         if (++counter === total) { done(); }
       });
