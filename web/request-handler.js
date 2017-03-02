@@ -27,14 +27,26 @@ exports.handleRequest = function (req, res) {
       data += chunk;
     }).on('end', function() {
       var dataObj = qs.parse(data);
-      fs.appendFile(archive.paths.list, (dataObj.url + '\n'), 'utf8', function(err) {
-        if (err) {
-          console.log('Error!');
+      archive.isUrlArchived(dataObj.url, function(exists) {
+        if (exists) {
+          fs.readFile((archive.paths.archivedSites + '/' + dataObj.url), function(err, data) {
+            if (err) {
+              console.log('There\'s an error!');
+            } else {
+              res.writeHead(200);
+              res.end(data);
+            }
+          });
         } else {
-          res.writeHead(302);
+          fs.readFile((archive.paths.siteAssets + '/loading.html'), function(err, data) {
+            if (err) {
+              console.log('There\'s an error!');
+            } else {
+              res.writeHead(302);
+              res.end(data);
+            }
+          });
         }
-
-        res.end('Hello, Craig');
       });
     });
   }
