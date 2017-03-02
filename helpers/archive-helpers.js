@@ -32,12 +32,22 @@ exports.readListOfUrls = function(callback) {
       console.log('There\'s another error!');
     } else {
       urlArray = data.split('\n');
-      callback(urlArray);
+      return callback(urlArray);
     }
   });
 };
 
 exports.isUrlInList = function(url, callback) {
+  var urlArray;
+  fs.readFile(exports.paths.list, 'utf8', function(err, data) {
+    if (err) {
+      console.log('There\'s another error!');
+    } else {
+      urlArray = data.split('\n');
+    }
+  });
+
+  callback(urlArray.includes(url));
 };
 
 exports.addUrlToList = function(url, callback) {
