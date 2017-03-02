@@ -27,14 +27,15 @@ exports.handleRequest = function (req, res) {
       data += chunk;
     }).on('end', function() {
       var dataObj = qs.parse(data);
-      fs.write(archive.paths.list, dataObj.url, function(err) {
+      fs.appendFile(archive.paths.list, (dataObj.url + '\n'), 'utf8', function(err) {
         if (err) {
           console.log('Error!');
+        } else {
+          res.writeHead(302);
         }
-        console.log('Murdered it!');
+        res.end('Hello, Craig');
       });
     });
-    res.end('Hello, Craig');
   }
 
   console.log(parseUrl.path);
