@@ -16,6 +16,12 @@ exports.paths = {
   list: path.join(__dirname, '../archives/sites.txt')
 };
 
+exports.routes = {
+  '/': exports.paths.siteAssets + '/index.html',
+  '/www.google.com': exports.paths.archivedSites + '/www.google.com',
+  '/loading.html': exports.paths.siteAssets + '/loading.html'
+};
+
 // Used for stubbing paths for tests, do not modify
 exports.initialize = function(pathsObj) {
   _.each(pathsObj, function(path, type) {
@@ -109,6 +115,8 @@ exports.downloadUrls = function(urls) {
               if (err) {
                 console.log('File could not be written');
               }
+              // Add to route when we make the file!
+              exports.routes[url] = exports.paths.archivedSites + '/' + url;
             });
             //console.log(rawData);
           });
