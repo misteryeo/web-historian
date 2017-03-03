@@ -116,7 +116,13 @@ exports.downloadUrls = function(urls) {
                 console.log('File could not be written');
               }
               // Add to route when we make the file!
-              exports.routes[url] = exports.paths.archivedSites + '/' + url;
+              exports.routes['/' + url] = exports.paths.archivedSites + '/' + url;
+              console.log(exports.routes);
+              fs.writeFile(exports.paths.list, '', function(err) {
+                if (err) {
+                  console.log('Error clearing sites.txt');
+                }
+              });
             });
             //console.log(rawData);
           });

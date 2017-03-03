@@ -69,7 +69,7 @@ describe('server', function() {
               console.log(fileContents);
               expect(fileContents).to.equal(url + '\n');
             }
-            console.log(err);
+            console.log('something');
             done(err);
           });
       });
